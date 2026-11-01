@@ -32,10 +32,11 @@ const UserMenuButton = () => {
                     aria-haspopup='true'
                     onClick={onUserButtonClick}
                     color='inherit'
-                    // Same rounded square as the avatar, so the hover and click effects match it
-                    sx={{ padding: 0, borderRadius: '30%' }}
+                    // Same rounded square as the avatar, so the hover and click effects match it.
+                    // 30px avatar + 8px padding = the 46px of the other toolbar icon buttons
+                    sx={{ padding: '8px', borderRadius: '30%' }}
                 >
-                    <UserAvatar user={user} />
+                    <UserAvatar user={user} size={30} />
                 </IconButton>
             </Tooltip>
 
