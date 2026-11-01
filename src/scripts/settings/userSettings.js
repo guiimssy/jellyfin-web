@@ -70,7 +70,8 @@ export class UserSettings {
         }
 
         // Resolve the ApiClient and Server ID from the input
-        const apiClient = typeof apiClientOrId === 'string' ? ServerConnections.getApi(apiClientOrId) : apiClientOrId;
+        // NOTE: Must be the legacy ApiClient, the SDK Api has no updateDisplayPreferences() (used when saving)
+        const apiClient = typeof apiClientOrId === 'string' ? ServerConnections.getApiClient(apiClientOrId) : apiClientOrId;
         const serverId = typeof apiClientOrId === 'string' ? apiClientOrId : apiClient?.serverId();
 
         this.currentUserId = userId;
