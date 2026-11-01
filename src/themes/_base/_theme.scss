@@ -27,19 +27,21 @@ $action-hover: palette.$action-hover !default;
 $divider: palette.$divider !default;
 
 // Components
-$appBar-defaultBg: #202020 !default;
+$appBar-defaultBg: #0b0b0f !default;
 // NOTE: This color is not part of the MUI theme
 $appBar-transparentBg: rgba(0, 0, 0, 0.4) !default;
 $filledInput-bg: rgba(255, 255, 255, 0.09) !default;
 // NOTE: Defaults to $filledInput-bg so dark themes keep their seamless look
 $filledInput-borderColor: $filledInput-bg !default;
 // NOTE: Card border radius — matches the default in card.scss; exposed as --jf-card-borderRadius for custom user themes
-$card-borderRadius: 0.2em !default;
+$card-borderRadius: 10px !default;
+// Border radius of buttons and form fields
+$control-borderRadius: 8px !default;
 $alert-infoFilledBg: #0288d1 !default;
 $alert-infoFilledColor: #fff !default;
-$button-inheritContainedBg: #424242 !default;
-$button-inheritContainedHoverBg: #616161 !default;
-$snackbarContent-bg: #303030 !default;
+$button-inheritContainedBg: #2a2a33 !default;
+$button-inheritContainedHoverBg: #3f3f46 !default;
+$snackbarContent-bg: #1f1f27 !default;
 $snackbarContent-color: rgba(255, 255, 255, 0.87) !default;
 // Secondary/accent color used for focus and interactive states.
 // Defaults to $primary-main so all existing themes are unaffected.
@@ -59,11 +61,16 @@ $appBar-gradient: none !default;
     --jf-palette-AppBar-transparentBg: #{$appBar-transparentBg};
     --jf-palette-AppBar-gradient: #{$appBar-gradient};
     --jf-card-borderRadius: #{$card-borderRadius};
+    --jf-control-borderRadius: #{$control-borderRadius};
 }
 
 * {
     scrollbar-width: thin;
-    scrollbar-color: #3b3b3b #202020;
+    scrollbar-color: #3f3f46 transparent;
+}
+
+.emby-button:not(.fab):not(.paper-icon-button-light):not(.emby-tab-button) {
+    border-radius: var(--jf-control-borderRadius, $control-borderRadius);
 }
 
 .skinHeader,
@@ -398,7 +405,7 @@ a[data-role="button"],
     color: inherit;
     border-width: 0.16em;
     border-style: solid;
-    border-radius: 0.2em;
+    border-radius: var(--jf-control-borderRadius, $control-borderRadius);
 
     &:focus {
         border-color: var(--jf-palette-secondary-main, $secondary-main);
@@ -413,7 +420,7 @@ a[data-role="button"],
     color: inherit;
     border-width: 0.16em;
     border-style: solid;
-    border-radius: 0.2em;
+    border-radius: var(--jf-control-borderRadius, $control-borderRadius);
 }
 
 .emby-select-withcolor > option {
@@ -519,7 +526,7 @@ a[data-role="button"],
 }
 
 .programCell-active {
-    background: #1e1e1e !important;
+    background: #1f1f27 !important;
 }
 
 .guide-channelHeaderCell:focus,
@@ -581,7 +588,7 @@ a[data-role="button"],
 }
 
 ::-webkit-scrollbar-track-piece {
-    background-color: #3b3b3b;
+    background-color: transparent;
 }
 
 .layout-desktop ::-webkit-scrollbar,
@@ -592,8 +599,8 @@ a[data-role="button"],
 
 ::-webkit-scrollbar-thumb:horizontal,
 ::-webkit-scrollbar-thumb:vertical {
-    border-radius: 2px;
-    background: center no-repeat #888;
+    border-radius: 4px;
+    background: center no-repeat #3f3f46;
 }
 
 .timeslotHeaders-desktop::-webkit-scrollbar {

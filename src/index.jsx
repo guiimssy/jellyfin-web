@@ -47,6 +47,7 @@ import './styles/livetv.scss';
 import './styles/dashboard.scss';
 import './styles/detailtable.scss';
 import './styles/librarybrowser.scss';
+import './styles/gstream.scss';
 
 async function init() {
     // Log current version to console to help out with issue triage and debugging
@@ -145,6 +146,13 @@ function loadFonts() {
         console.debug('using default fonts');
         import('./styles/fonts.scss');
         import('./styles/fonts.noto.scss');
+        import('@fontsource/inter/400.css');
+        import('@fontsource/inter/500.css');
+        import('@fontsource/inter/600.css');
+        import('@fontsource/inter/700.css');
+        import('@fontsource/montserrat/700.css');
+        import('@fontsource/montserrat/800.css');
+        import('./styles/fonts.gstream.scss');
     }
 }
 

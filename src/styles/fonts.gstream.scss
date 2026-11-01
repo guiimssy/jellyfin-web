@@ -1,0 +1,23 @@
+// GStream typography: Inter for text, Montserrat for headings.
+// Noto Sans stays as a fallback for the CJK character sets.
+$text-font: "Inter", "Noto Sans", "Noto Sans HK", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC", "Noto Sans TC", sans-serif;
+$heading-font: "Montserrat", $text-font;
+
+html {
+    font-family: $text-font;
+}
+
+h1,
+h2,
+h3,
+.sectionTitle,
+.itemName,
+.pageTitle {
+    font-family: $heading-font;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+h1 {
+    font-weight: 800;
+}

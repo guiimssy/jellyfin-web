@@ -6,6 +6,7 @@ import globalize from '../../../lib/globalize';
 import { clearBackdrop } from '../../../components/backdrop/backdrop';
 import layoutManager from '../../../components/layoutManager';
 import Page from '../../../components/Page';
+import HomeHero from 'apps/modern/features/home/components/HomeHero';
 import { EventType } from 'constants/eventType';
 import Events from 'utils/events';
 
@@ -175,6 +176,7 @@ const Home = () => {
                 ]}
             >
                 <div className='tabContent pageTabContent' id='homeTab' data-index='0'>
+                    {!layoutManager.tv && <HomeHero />}
                     <div className='sections'></div>
                 </div>
                 <div className='tabContent pageTabContent' id='favoritesTab' data-index='1'>

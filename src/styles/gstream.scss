@@ -1,0 +1,357 @@
+// GStream design layer.
+// Everything that restyles existing Jellyfin components lives here, so upstream
+// files stay untouched and merges remain simple. Selectors start with `html`
+// to win over component stylesheets that are loaded later (card.scss, videoosd.scss).
+
+$accent: var(--jf-palette-primary-main, #e50914);
+$accent-dark: var(--jf-palette-primary-dark, #b20710);
+$ground: var(--jf-palette-background-default, #0b0b0f);
+$surface: #1f1f27;
+$outline: #3f3f46;
+$muted: #a1a1aa;
+$heading-font: "Montserrat", "Inter", "Noto Sans", sans-serif;
+
+// Filled, rounded media glyphs (Apple-style), drawn through a mask so they
+// inherit the text color. Replaces the Material icon glyph of the element.
+@mixin glyph($svg) {
+    &::before {
+        content: "";
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        background-color: currentColor;
+        mask: url("data:image/svg+xml,#{$svg}") center / contain no-repeat;
+        -webkit-mask: url("data:image/svg+xml,#{$svg}") center / contain no-repeat;
+    }
+}
+
+$svg-open: "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E";
+$svg-pause: "#{$svg-open}%3Crect x='6.2' y='4.5' width='4' height='15' rx='1.4'/%3E%3Crect x='13.8' y='4.5' width='4' height='15' rx='1.4'/%3E%3C/svg%3E";
+$svg-play: "#{$svg-open}%3Cpath d='M7.5 5.2v13.6a1 1 0 0 0 1.5.86l11-6.8a1 1 0 0 0 0-1.72l-11-6.8a1 1 0 0 0-1.5.86z'/%3E%3C/svg%3E";
+$svg-rewind: "#{$svg-open}%3Cpath d='M11.2 7v10L4 12zM19.8 7v10l-7.2-5z' stroke='black' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E";
+$svg-forward: "#{$svg-open}%3Cpath d='M12.8 7v10l7.2-5zM4.2 7v10l7.2-5z' stroke='black' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E";
+
+/* ---------- Phase 2: components ---------- */
+
+// Section titles (home rows, detail sections)
+html .sectionTitle {
+    font-family: $heading-font;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+// Row scroll arrows: round outlined buttons, like the mockups
+html .emby-scrollbuttons-button {
+    width: 2.6em;
+    height: 2.6em;
+    border-radius: 50%;
+    border: 1px solid $outline;
+    background: $surface;
+    color: #fff;
+    margin: 0 0.2em;
+
+    &:hover:not(:disabled) {
+        background: $outline;
+        color: #fff;
+    }
+
+    &:disabled {
+        background: transparent;
+        color: #71717a;
+    }
+}
+
+// Cards: gentle lift on hover, bolder titles
+html .layout-desktop .card-hoverable .cardBox {
+    transition: transform 0.2s ease-out;
+}
+
+html .layout-desktop .card-hoverable:hover .cardBox {
+    transform: translateY(-4px);
+}
+
+html .cardText-first {
+    font-weight: 600;
+}
+
+html .cardOverlayContainer > .cardOverlayFab-primary {
+    background: $accent;
+    color: #fff;
+    border-radius: 50%;
+}
+
+html .cardOverlayFab-primary .play_arrow {
+    @include glyph($svg-play);
+}
+
+// Primary buttons
+html .button-submit {
+    font-weight: 600;
+
+    &:hover {
+        background: $accent-dark;
+    }
+}
+
+/* ---------- Phase 3: item details page ---------- */
+
+html .layout-desktop .itemBackdrop {
+    height: 62vh;
+}
+
+// Darken the backdrop towards the bottom and the left so the title stays readable
+html .itemBackdrop::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(to top, $ground 0%, rgba(11, 11, 15, 0.6) 30%, rgba(11, 11, 15, 0) 65%),
+        linear-gradient(to right, rgba(11, 11, 15, 0.75) 0%, rgba(11, 11, 15, 0) 60%);
+    pointer-events: none;
+}
+
+html .detailRibbon {
+    background: transparent;
+}
+
+html .layout-desktop .detailRibbon {
+    height: auto;
+    min-height: 7.2em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+html .layout-desktop .detailRibbon .itemName {
+    font-size: 2.4em;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #fff;
+}
+
+html .mainDetailButtons {
+    flex-wrap: wrap;
+    gap: 0.6em;
+}
+
+// Secondary actions: round outlined buttons
+html .mainDetailButtons .detailButton {
+    width: 3.2em;
+    height: 3.2em;
+    padding: 0 !important;
+    border-radius: 50%;
+    border: 1px solid $outline;
+    color: #fff;
+
+    &:hover {
+        background: $surface;
+        color: #fff;
+    }
+}
+
+html .mainDetailButtons .detailButton-icon {
+    font-size: 1.4em !important;
+}
+
+// Main action: red "Play / Resume" button with its (translated) title as label
+html .mainDetailButtons .btnPlay {
+    width: auto;
+    flex-direction: row;
+    gap: 0.5em;
+    padding: 0 1.6em !important;
+    border: 0;
+    border-radius: var(--jf-control-borderRadius, 8px);
+    background: $accent;
+    color: #fff;
+
+    &::after {
+        content: attr(title);
+        font-weight: 600;
+    }
+
+    &:hover {
+        background: $accent-dark;
+        color: #fff;
+    }
+
+    .play_arrow {
+        @include glyph($svg-play);
+    }
+}
+
+html .layout-desktop .detailImageContainer .card .cardBox {
+    border-radius: var(--jf-card-borderRadius, 10px);
+    overflow: hidden;
+}
+
+/* ---------- Phase 3: video player ---------- */
+
+html .videoOsdBottom {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+html .skinHeader-withBackground.osdHeader {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+html .osdTitle {
+    font-family: $heading-font;
+    font-weight: 700;
+}
+
+html .videoOsdBottom .material-icons.pause {
+    @include glyph($svg-pause);
+}
+
+html .videoOsdBottom .material-icons.play_arrow {
+    @include glyph($svg-play);
+}
+
+html .videoOsdBottom .material-icons.fast_rewind {
+    @include glyph($svg-rewind);
+}
+
+html .videoOsdBottom .material-icons.fast_forward {
+    @include glyph($svg-forward);
+}
+
+// The play/pause button is the largest control of the bar
+html .videoOsdBottom .btnPause {
+    font-size: 1.35em;
+}
+
+/* ---------- Phase 3: home "featured" banner ---------- */
+
+.gsHero {
+    position: relative;
+    min-height: 62vh;
+    display: flex;
+    align-items: flex-end;
+    margin: 0 0 1.5em;
+    background-color: $surface;
+    background-size: cover;
+    background-position: center top;
+    overflow: hidden;
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(to top, $ground 0%, rgba(11, 11, 15, 0.55) 30%, rgba(11, 11, 15, 0) 60%),
+            linear-gradient(to right, rgba(11, 11, 15, 0.85) 0%, rgba(11, 11, 15, 0) 65%);
+    }
+
+    .layout-mobile & {
+        min-height: 52vh;
+    }
+}
+
+.gsHero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 40em;
+    padding: 0 3.3% 3em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    color: #fff;
+}
+
+.gsHero-badge {
+    align-self: flex-start;
+    background: $accent;
+    color: #fff;
+    font-size: 0.75em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.4em 0.7em;
+    border-radius: 4px;
+}
+
+.gsHero-logo {
+    max-width: 22em;
+    max-height: 8em;
+    object-fit: contain;
+    object-position: left bottom;
+}
+
+.gsHero-title {
+    margin: 0;
+    font-family: $heading-font;
+    font-size: 3.2em;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+
+    .layout-mobile & {
+        font-size: 2.2em;
+    }
+}
+
+.gsHero-meta {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6em;
+    color: #d4d4d8;
+}
+
+.gsHero-rating {
+    border: 1px solid #71717a;
+    border-radius: 4px;
+    padding: 0 0.4em;
+    font-size: 0.85em;
+}
+
+.gsHero-overview {
+    margin: 0;
+    color: #d4d4d8;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.gsHero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75em;
+    margin-top: 0.4em;
+}
+
+.gsHero-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    height: 3.2em;
+    padding: 0 1.6em;
+    border: 0;
+    border-radius: var(--jf-control-borderRadius, 8px);
+    font: inherit;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.16);
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.26);
+    }
+
+    &-primary {
+        background: $accent;
+
+        &:hover {
+            background: $accent-dark;
+        }
+    }
+
+    svg {
+        width: 1.25em;
+        height: 1.25em;
+    }
+}
