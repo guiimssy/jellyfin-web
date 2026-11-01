@@ -106,6 +106,14 @@ export const DEFAULT_THEME_OPTIONS: ThemeOptions = {
                 }
             ]
         },
+        MuiChip: {
+            styleOverrides: {
+                root: {
+                    // Same rounding as the cards instead of a pill shape
+                    borderRadius: 'var(--jf-card-borderRadius, 10px)'
+                }
+            }
+        },
         MuiFormControl: {
             defaultProps: {
                 variant: 'filled'

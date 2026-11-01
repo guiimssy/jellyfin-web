@@ -86,6 +86,12 @@ html .cardOverlayFab-primary .play_arrow {
     @include glyph($svg-play);
 }
 
+// Tag "pills" of the subtitle and lyrics editors: same rounding as the cards
+html .subtitleFeaturePillow,
+html .lyricsFeaturePillow {
+    border-radius: var(--jf-card-borderRadius, 10px);
+}
+
 // Primary buttons
 html .button-submit {
     font-weight: 600;
@@ -253,7 +259,7 @@ html .videoOsdBottom .btnPause {
     display: inline-block;
     margin-top: 0.35em;
     padding: 0.2em 0.6em;
-    border-radius: 999px;
+    border-radius: var(--jf-control-borderRadius, 8px);
     background: rgba(229, 9, 20, 0.14);
     color: $accent;
     font-size: 0.8em;
