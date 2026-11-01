@@ -204,7 +204,7 @@ const UserProfile: FunctionComponent = () => {
                         />
                         <div
                             id='image'
-                            style={{ width: 200, height: 200, backgroundRepeat: 'no-repeat', backgroundPosition: 'center', borderRadius: '100%', backgroundSize: 'cover' }}
+                            style={{ width: 200, height: 200, backgroundRepeat: 'no-repeat', backgroundPosition: 'center', borderRadius: '30%', backgroundSize: 'cover' }}
                         />
                     </div>
                     <div style={{ verticalAlign: 'top', margin: '1em 2em', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

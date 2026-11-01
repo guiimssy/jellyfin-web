@@ -86,6 +86,12 @@ html .cardOverlayFab-primary .play_arrow {
     @include glyph($svg-play);
 }
 
+// User pictures of the legacy header: rounded square like the GS logo tile
+html .headerUserImage,
+html .headerUserButtonRound div {
+    border-radius: 30%;
+}
+
 // Tag "pills" of the subtitle and lyrics editors: same rounding as the cards
 html .subtitleFeaturePillow,
 html .lyricsFeaturePillow {

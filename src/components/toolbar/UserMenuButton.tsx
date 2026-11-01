@@ -32,7 +32,8 @@ const UserMenuButton = () => {
                     aria-haspopup='true'
                     onClick={onUserButtonClick}
                     color='inherit'
-                    sx={{ padding: 0 }}
+                    // Same rounded square as the avatar, so the hover and click effects match it
+                    sx={{ padding: 0, borderRadius: '30%' }}
                 >
                     <UserAvatar user={user} />
                 </IconButton>

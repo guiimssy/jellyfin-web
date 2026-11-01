@@ -106,6 +106,14 @@ export const DEFAULT_THEME_OPTIONS: ThemeOptions = {
                 }
             ]
         },
+        MuiAvatar: {
+            styleOverrides: {
+                circular: {
+                    // Rounded square like the GS logo tile (12px on 40px)
+                    borderRadius: '30%'
+                }
+            }
+        },
         MuiChip: {
             styleOverrides: {
                 root: {
