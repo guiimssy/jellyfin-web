@@ -1,4 +1,4 @@
-import icon from '@jellyfin/ux-web/icon-transparent.png';
+import icon from 'assets/img/gstream/icon-transparent.png';
 
 import { PluginType } from 'constants/pluginType';
 import { randomInt } from 'utils/number';
