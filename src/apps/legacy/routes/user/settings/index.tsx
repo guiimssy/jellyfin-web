@@ -1,11 +1,12 @@
 import type { UserDto } from '@jellyfin/sdk/lib/generated-client/models/user-dto';
-import React, { useEffect, useMemo, useState, type FC } from 'react';
+import React, { useEffect, useMemo, useState, type FC, type ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { appHost } from 'components/apphost';
 import layoutManager from 'components/layoutManager';
 import Loading from 'components/loading/LoadingComponent';
 import Page from 'components/Page';
+import UserAvatar from 'components/UserAvatar';
 import { AppFeature } from 'constants/appFeature';
 import LinkButton from 'elements/emby-button/LinkButton';
 import { useApi } from 'hooks/useApi';
@@ -16,6 +17,42 @@ import browser from 'scripts/browser';
 import Dashboard from 'utils/dashboard';
 import shell from 'scripts/shell';
 import keyboardNavigation from 'scripts/keyboardNavigation';
+
+interface SettingsTileProps {
+    /** Extra class names; some are used by AppOverrides.scss to hide tiles in the modern layout */
+    className?: string
+    href?: string
+    onClick?: () => void
+    /** Material icon name */
+    icon: string
+    title: string
+    description?: string
+    isDanger?: boolean
+}
+
+const SettingsTile: FC<SettingsTileProps> = ({ className, href, onClick, icon, title, description, isDanger }) => (
+    <LinkButton
+        href={href}
+        onClick={onClick}
+        className={`gsSettings-tile ${isDanger ? 'gsSettings-tile-danger' : ''} ${className ?? ''}`}
+    >
+        <span className={`material-icons gsSettings-tileIcon ${icon}`} aria-hidden='true' />
+        <span className='gsSettings-tileText'>
+            <span className='gsSettings-tileTitle'>{title}</span>
+            {description && <span className='gsSettings-tileDescription'>{description}</span>}
+        </span>
+        <span className='material-icons gsSettings-tileChevron chevron_right' aria-hidden='true' />
+    </LinkButton>
+);
+
+const SettingsSection: FC<{ className?: string, title: string, children: ReactNode }> = ({ className, title, children }) => (
+    <section className={`gsSettings-section ${className ?? ''}`}>
+        <h2 className='gsSettings-sectionTitle'>{title}</h2>
+        <div className='gsSettings-grid'>
+            {children}
+        </div>
+    </section>
+);
 
 const UserSettingsPage: FC = () => {
     const { user: currentUser } = useApi();
@@ -57,328 +94,133 @@ const UserSettingsPage: FC = () => {
             title={globalize.translate('Settings')}
             shouldAutoFocus
         >
-            <div className='padded-left padded-right padded-bottom-page padded-top'>
-                <div
-                    className='readOnlyContent'
-                    style={{
-                        margin: '0 auto'
-                    }}
-                >
-                    <div className='verticalSection verticalSection-extrabottompadding'>
-                        <h2
-                            className='sectionTitle headerUsername'
-                            style={{
-                                paddingLeft: '0.25em'
-                            }}
-                        >
-                            {user.Name}
-                        </h2>
-
-                        <LinkButton
-                            href={`#/userprofile?userId=${userId}`}
-                            className='lnkUserProfile listItem-border'
-                            style={{
-                                display: 'block',
-                                margin: 0,
-                                padding: 0
-                            }}
-                        >
-                            <div className='listItem'>
-                                <span className='material-icons listItemIcon listItemIcon-transparent person' aria-hidden='true' />
-                                <div className='listItemBody'>
-                                    <div className='listItemBodyText'>
-                                        {globalize.translate('Profile')}
-                                    </div>
-                                </div>
-                            </div>
-                        </LinkButton>
-
-                        {isQuickConnectEnabled && (
-                            <LinkButton
-                                href={`#/quickconnect?userId=${userId}`}
-                                className='lnkQuickConnectPreferences listItem-border'
-                                style={{
-                                    display: 'block',
-                                    margin: 0,
-                                    padding: 0
-                                }}
-                            >
-                                <div className='listItem'>
-                                    <span className='material-icons listItemIcon listItemIcon-transparent phonelink_lock' aria-hidden='true' />
-                                    <div className='listItemBody'>
-                                        <div className='listItemBodyText'>
-                                            {globalize.translate('QuickConnect')}
-                                        </div>
-                                    </div>
-                                </div>
-                            </LinkButton>
-                        )}
-
-                        <LinkButton
-                            href={`#/mypreferencesdisplay?userId=${userId}`}
-                            className='lnkDisplayPreferences listItem-border'
-                            style={{
-                                display: 'block',
-                                margin: 0,
-                                padding: 0
-                            }}
-                        >
-                            <div className='listItem'>
-                                <span className='material-icons listItemIcon listItemIcon-transparent tv' aria-hidden='true' />
-                                <div className='listItemBody'>
-                                    <div className='listItemBodyText'>
-                                        {globalize.translate('Display')}
-                                    </div>
-                                </div>
-                            </div>
-                        </LinkButton>
-
-                        <LinkButton
-                            href={`#/mypreferenceshome?userId=${userId}`}
-                            className='lnkHomePreferences listItem-border'
-                            style={{
-                                display: 'block',
-                                margin: 0,
-                                padding: 0
-                            }}
-                        >
-                            <div className='listItem'>
-                                <span className='material-icons listItemIcon listItemIcon-transparent home' aria-hidden='true' />
-                                <div className='listItemBody'>
-                                    <div className='listItemBodyText'>
-                                        {globalize.translate('Home')}
-                                    </div>
-                                </div>
-                            </div>
-                        </LinkButton>
-
-                        <LinkButton
-                            href={`#/mypreferencesplayback?userId=${userId}`}
-                            className='lnkPlaybackPreferences listItem-border'
-                            style={{
-                                display: 'block',
-                                margin: 0,
-                                padding: 0
-                            }}
-                        >
-                            <div className='listItem'>
-                                <span className='material-icons listItemIcon listItemIcon-transparent play_circle_filled' aria-hidden='true' />
-                                <div className='listItemBody'>
-                                    <div className='listItemBodyText'>
-                                        {globalize.translate('TitlePlayback')}
-                                    </div>
-                                </div>
-                            </div>
-                        </LinkButton>
-
-                        <LinkButton
-                            href={`#/mypreferencessubtitles?userId=${userId}`}
-                            className='lnkSubtitlePreferences listItem-border'
-                            style={{
-                                display: 'block',
-                                margin: 0,
-                                padding: 0
-                            }}
-                        >
-                            <div className='listItem'>
-                                <span className='material-icons listItemIcon listItemIcon-transparent closed_caption' aria-hidden='true' />
-                                <div className='listItemBody'>
-                                    <div className='listItemBodyText'>
-                                        {globalize.translate('Subtitles')}
-                                    </div>
-                                </div>
-                            </div>
-                        </LinkButton>
-
-                        {appHost.supports(AppFeature.DownloadManagement) && (
-                            <LinkButton
-                                onClick={shell.openDownloadManager}
-                                className='downloadManager listItem-border'
-                                style={{
-                                    display: 'block',
-                                    margin: 0,
-                                    padding: 0
-                                }}
-                            >
-                                <div className='listItem'>
-                                    <span className='material-icons listItemIcon listItemIcon-transparent download' aria-hidden='true' />
-                                    <div className='listItemBody'>
-                                        <div className='listItemBodyText'>
-                                            {globalize.translate('DownloadManager')}
-                                        </div>
-                                    </div>
-                                </div>
-                            </LinkButton>
-                        )}
-
-                        {appHost.supports(AppFeature.ClientSettings) && (
-                            <LinkButton
-                                onClick={shell.openClientSettings}
-                                className='clientSettings listItem-border'
-                                style={{
-                                    display: 'block',
-                                    margin: 0,
-                                    padding: 0
-                                }}
-                            >
-                                <div className='listItem'>
-                                    <span className='material-icons listItemIcon listItemIcon-transparent devices_other' aria-hidden='true' />
-                                    <div className='listItemBody'>
-                                        <div className='listItemBodyText'>
-                                            {globalize.translate('ClientSettings')}
-                                        </div>
-                                    </div>
-                                </div>
-                            </LinkButton>
-                        )}
-
-                        {isLoggedInUser && !browser.mobile && !isControlsPageEmpty && (
-                            <LinkButton
-                                href={`#/mypreferencescontrols?userId=${userId}`}
-                                className='lnkControlsPreferences listItem-border'
-                                style={{
-                                    display: 'block',
-                                    margin: 0,
-                                    padding: 0
-                                }}
-                            >
-                                <div className='listItem'>
-                                    <span className='material-icons listItemIcon listItemIcon-transparent keyboard' aria-hidden='true' />
-                                    <div className='listItemBody'>
-                                        <div className='listItemBodyText'>
-                                            {globalize.translate('Controls')}
-                                        </div>
-                                    </div>
-                                </div>
-                            </LinkButton>
+            <div className='gsSettings padded-left padded-right padded-bottom-page padded-top'>
+                <header className='gsSettings-header'>
+                    <UserAvatar user={user} size={72} />
+                    <div className='gsSettings-headerText'>
+                        <h1 className='gsSettings-userName headerUsername'>{user.Name}</h1>
+                        {user.Policy?.IsAdministrator && (
+                            <span className='gsSettings-role'>{globalize.translate('LabelAdministrator')}</span>
                         )}
                     </div>
+                </header>
 
-                    {isLoggedInUser && user.Policy?.IsAdministrator && !layoutManager.tv && (
-                        <div className='adminSection verticalSection verticalSection-extrabottompadding'>
-                            <h2
-                                className='sectionTitle headerUsername'
-                                style={{
-                                    paddingLeft: '0.25em'
-                                }}
-                            >
-                                {globalize.translate('HeaderAdmin')}
-                            </h2>
-
-                            <LinkButton
-                                href='#/dashboard'
-                                className='listItem-border'
-                                style={{
-                                    display: 'block',
-                                    margin: 0,
-                                    padding: 0
-                                }}
-                            >
-                                <div className='listItem'>
-                                    <span className='material-icons listItemIcon listItemIcon-transparent dashboard' aria-hidden='true' />
-                                    <div className='listItemBody'>
-                                        <div className='listItemBodyText'>
-                                            {globalize.translate('TabDashboard')}
-                                        </div>
-                                    </div>
-                                </div>
-                            </LinkButton>
-
-                            <LinkButton
-                                href='#/metadata'
-                                className='listItem-border'
-                                style={{
-                                    display: 'block',
-                                    margin: 0,
-                                    padding: 0
-                                }}
-                            >
-                                <div className='listItem'>
-                                    <span className='material-icons listItemIcon listItemIcon-transparent mode_edit' aria-hidden='true' />
-                                    <div className='listItemBody'>
-                                        <div className='listItemBodyText'>
-                                            {globalize.translate('MetadataManager')}
-                                        </div>
-                                    </div>
-                                </div>
-                            </LinkButton>
-                        </div>
+                <SettingsSection title={globalize.translate('HeaderPreferences')}>
+                    <SettingsTile
+                        className='lnkUserProfile'
+                        href={`#/userprofile?userId=${userId}`}
+                        icon='person'
+                        title={globalize.translate('Profile')}
+                        description={globalize.translate('SettingsProfileHelp')}
+                    />
+                    {isQuickConnectEnabled && (
+                        <SettingsTile
+                            className='lnkQuickConnectPreferences'
+                            href={`#/quickconnect?userId=${userId}`}
+                            icon='phonelink_lock'
+                            title={globalize.translate('QuickConnect')}
+                            description={globalize.translate('SettingsQuickConnectHelp')}
+                        />
                     )}
-
-                    {isLoggedInUser && (
-                        <div className='userSection verticalSection verticalSection-extrabottompadding'>
-                            <h2
-                                className='sectionTitle headerUsername'
-                                style={{
-                                    paddingLeft: '0.25em'
-                                }}
-                            >
-                                {globalize.translate('HeaderUser')}
-                            </h2>
-
-                            {appHost.supports(AppFeature.MultiServer) && (
-                                <LinkButton
-                                    onClick={Dashboard.selectServer}
-                                    className='selectServer listItem-border'
-                                    style={{
-                                        display: 'block',
-                                        margin: 0,
-                                        padding: 0
-                                    }}
-                                >
-                                    <div className='listItem'>
-                                        <span className='material-icons listItemIcon listItemIcon-transparent storage' aria-hidden='true' />
-                                        <div className='listItemBody'>
-                                            <div className='listItemBodyText'>
-                                                {globalize.translate('SelectServer')}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </LinkButton>
-                            )}
-
-                            <LinkButton
-                                onClick={Dashboard.logout}
-                                className='btnLogout listItem-border'
-                                style={{
-                                    display: 'block',
-                                    margin: 0,
-                                    padding: 0
-                                }}
-                            >
-                                <div className='listItem'>
-                                    <span className='material-icons listItemIcon listItemIcon-transparent exit_to_app' aria-hidden='true' />
-                                    <div className='listItemBody'>
-                                        <div className='listItemBodyText'>
-                                            {globalize.translate('ButtonSignOut')}
-                                        </div>
-                                    </div>
-                                </div>
-                            </LinkButton>
-
-                            {appHost.supports(AppFeature.ExitMenu) && (
-                                <LinkButton
-                                    onClick={appHost.exit}
-                                    className='exitApp listItem-border'
-                                    style={{
-                                        display: 'block',
-                                        margin: 0,
-                                        padding: 0
-                                    }}
-                                >
-                                    <div className='listItem'>
-                                        <span className='material-icons listItemIcon listItemIcon-transparent close' aria-hidden='true' />
-                                        <div className='listItemBody'>
-                                            <div className='listItemBodyText'>
-                                                {globalize.translate('ButtonExitApp')}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </LinkButton>
-                            )}
-                        </div>
+                    <SettingsTile
+                        className='lnkDisplayPreferences'
+                        href={`#/mypreferencesdisplay?userId=${userId}`}
+                        icon='tv'
+                        title={globalize.translate('Display')}
+                        description={globalize.translate('SettingsDisplayHelp')}
+                    />
+                    <SettingsTile
+                        className='lnkHomePreferences'
+                        href={`#/mypreferenceshome?userId=${userId}`}
+                        icon='home'
+                        title={globalize.translate('Home')}
+                        description={globalize.translate('SettingsHomeHelp')}
+                    />
+                    <SettingsTile
+                        className='lnkPlaybackPreferences'
+                        href={`#/mypreferencesplayback?userId=${userId}`}
+                        icon='play_circle_filled'
+                        title={globalize.translate('TitlePlayback')}
+                        description={globalize.translate('SettingsPlaybackHelp')}
+                    />
+                    <SettingsTile
+                        className='lnkSubtitlePreferences'
+                        href={`#/mypreferencessubtitles?userId=${userId}`}
+                        icon='closed_caption'
+                        title={globalize.translate('Subtitles')}
+                        description={globalize.translate('SettingsSubtitlesHelp')}
+                    />
+                    {appHost.supports(AppFeature.DownloadManagement) && (
+                        <SettingsTile
+                            className='downloadManager'
+                            onClick={shell.openDownloadManager}
+                            icon='download'
+                            title={globalize.translate('DownloadManager')}
+                        />
                     )}
-                </div>
+                    {appHost.supports(AppFeature.ClientSettings) && (
+                        <SettingsTile
+                            className='clientSettings'
+                            onClick={shell.openClientSettings}
+                            icon='devices_other'
+                            title={globalize.translate('ClientSettings')}
+                        />
+                    )}
+                    {isLoggedInUser && !browser.mobile && !isControlsPageEmpty && (
+                        <SettingsTile
+                            className='lnkControlsPreferences'
+                            href={`#/mypreferencescontrols?userId=${userId}`}
+                            icon='keyboard'
+                            title={globalize.translate('Controls')}
+                            description={globalize.translate('SettingsControlsHelp')}
+                        />
+                    )}
+                </SettingsSection>
+
+                {isLoggedInUser && user.Policy?.IsAdministrator && !layoutManager.tv && (
+                    <SettingsSection className='adminSection' title={globalize.translate('HeaderAdmin')}>
+                        <SettingsTile
+                            href='#/dashboard'
+                            icon='dashboard'
+                            title={globalize.translate('TabDashboard')}
+                            description={globalize.translate('SettingsDashboardHelp')}
+                        />
+                        <SettingsTile
+                            href='#/metadata'
+                            icon='mode_edit'
+                            title={globalize.translate('MetadataManager')}
+                            description={globalize.translate('SettingsMetadataHelp')}
+                        />
+                    </SettingsSection>
+                )}
+
+                {isLoggedInUser && (
+                    <SettingsSection className='userSection' title={globalize.translate('HeaderUser')}>
+                        {appHost.supports(AppFeature.MultiServer) && (
+                            <SettingsTile
+                                className='selectServer'
+                                onClick={Dashboard.selectServer}
+                                icon='storage'
+                                title={globalize.translate('SelectServer')}
+                            />
+                        )}
+                        <SettingsTile
+                            className='btnLogout'
+                            onClick={Dashboard.logout}
+                            icon='exit_to_app'
+                            title={globalize.translate('ButtonSignOut')}
+                            isDanger
+                        />
+                        {appHost.supports(AppFeature.ExitMenu) && (
+                            <SettingsTile
+                                className='exitApp'
+                                onClick={appHost.exit}
+                                icon='close'
+                                title={globalize.translate('ButtonExitApp')}
+                            />
+                        )}
+                    </SettingsSection>
+                )}
             </div>
         </Page>
     );
