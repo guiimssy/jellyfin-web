@@ -37,6 +37,11 @@ $filledInput-borderColor: $filledInput-bg !default;
 $card-borderRadius: 10px !default;
 // Border radius of buttons and form fields
 $control-borderRadius: 8px !default;
+// GStream design tokens
+$gs-surface: #1f1f27 !default;
+$gs-outline: #3f3f46 !default;
+$gs-text-muted: #a1a1aa !default;
+$gs-heading-font: ("Montserrat", "Inter", "Noto Sans", sans-serif) !default;
 $alert-infoFilledBg: #0288d1 !default;
 $alert-infoFilledColor: #fff !default;
 $button-inheritContainedBg: #2a2a33 !default;
@@ -62,6 +67,11 @@ $appBar-gradient: none !default;
     --jf-palette-AppBar-gradient: #{$appBar-gradient};
     --jf-card-borderRadius: #{$card-borderRadius};
     --jf-control-borderRadius: #{$control-borderRadius};
+    // GStream tokens used by styles/gstream.scss and the drawer
+    --gs-surface: #{$gs-surface};
+    --gs-outline: #{$gs-outline};
+    --gs-text-muted: #{$gs-text-muted};
+    --gs-heading-font: #{$gs-heading-font};
 }
 
 * {

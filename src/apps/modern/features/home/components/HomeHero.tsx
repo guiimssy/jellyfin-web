@@ -10,6 +10,7 @@ import { useGetItems } from 'hooks/useFetchItems';
 import globalize from 'lib/globalize';
 import { ServerConnections } from 'lib/jellyfin-apiclient';
 import type { ItemDto } from 'types/base/models/item-dto';
+import dom from 'utils/dom';
 
 const TICKS_PER_MINUTE = 600000000;
 
@@ -29,7 +30,8 @@ const formatRuntime = (ticks: number | null | undefined) => {
 
 /** The large "Featured" banner shown at the top of the home page. */
 const HomeHero: FC = () => {
-    const { data } = useGetItems({
+    // isLoading (not isPending) so a disabled query never leaves the placeholder stuck
+    const { data, isLoading } = useGetItems({
         includeItemTypes: [BaseItemKind.Movie, BaseItemKind.Series],
         recursive: true,
         sortBy: [ItemSortBy.Random],
@@ -40,7 +42,8 @@ const HomeHero: FC = () => {
     });
     const item = data?.Items?.[0];
 
-    const backdropUrl = useMemo(() => item && getImageUrl(item, ImageType.Backdrop, 1920), [item]);
+    // Request the backdrop at the screen size (a standard width, so it stays cacheable)
+    const backdropUrl = useMemo(() => item && getImageUrl(item, ImageType.Backdrop, dom.getScreenWidth()), [item]);
     const logoUrl = useMemo(() => item && getImageUrl(item, ImageType.Logo, 600), [item]);
 
     const play = useCallback(() => {
@@ -50,6 +53,8 @@ const HomeHero: FC = () => {
         });
     }, [item]);
 
+    // Reserve the banner's space while loading so the home sections don't jump down
+    if (isLoading) return <section className='gsHero gsHero-loading' aria-hidden='true' />;
     if (!item) return null;
 
     const meta = [

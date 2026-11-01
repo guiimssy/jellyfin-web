@@ -8,15 +8,18 @@ import Logout from '@mui/icons-material/Logout';
 import PhonelinkLock from '@mui/icons-material/PhonelinkLock';
 import Settings from '@mui/icons-material/Settings';
 import Storage from '@mui/icons-material/Storage';
+import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
 import Menu, { MenuProps } from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import React, { FC, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
 import { appHost } from 'components/apphost';
+import UserAvatar from 'components/UserAvatar';
 import { AppFeature } from 'constants/appFeature';
 import { useApi } from 'hooks/useApi';
 import { useQuickConnectEnabled } from 'hooks/useQuickConnect';
@@ -25,6 +28,39 @@ import shell from 'scripts/shell';
 import Dashboard from 'utils/dashboard';
 
 export const ID = 'app-user-menu';
+
+/** GStream look of the menu paper and its items (matches the side drawer). */
+const MENU_PAPER_SX = {
+    marginTop: 1,
+    minWidth: 248,
+    backgroundColor: 'background.paper',
+    backgroundImage: 'none',
+    border: '1px solid var(--gs-surface, #1f1f27)',
+    borderRadius: '12px',
+    boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5)',
+    '& .MuiList-root': {
+        padding: '6px'
+    },
+    '& .MuiMenuItem-root': {
+        borderRadius: 'var(--jf-control-borderRadius, 8px)',
+        padding: '9px 12px',
+        color: '#d4d4d8',
+        '&:hover, &.Mui-focusVisible': {
+            backgroundColor: 'var(--gs-surface, #1f1f27)',
+            color: '#fff'
+        }
+    },
+    '& .MuiListItemIcon-root': {
+        color: 'var(--gs-text-muted, #a1a1aa)'
+    },
+    '& .MuiListItemText-primary': {
+        fontWeight: 500
+    },
+    '& .MuiDivider-root': {
+        margin: '6px 8px',
+        borderColor: 'var(--gs-surface, #1f1f27)'
+    }
+};
 
 interface AppUserMenuProps extends MenuProps {
     onMenuClose: () => void
@@ -78,7 +114,43 @@ const AppUserMenu: FC<AppUserMenuProps> = ({
             keepMounted
             open={open}
             onClose={onMenuClose}
+            slotProps={{ paper: { sx: MENU_PAPER_SX } }}
         >
+            {/* Header card: who is signed in (ListSubheader is skipped by keyboard navigation) */}
+            <ListSubheader
+                component='div'
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1.5,
+                    padding: '10px 12px 12px',
+                    backgroundColor: 'transparent',
+                    lineHeight: 1.3
+                }}
+            >
+                <UserAvatar user={user} size={40} />
+                <Box sx={{ minWidth: 0 }}>
+                    <Box
+                        sx={{
+                            fontFamily: 'var(--gs-heading-font)',
+                            fontWeight: 700,
+                            fontSize: '1rem',
+                            color: '#fff',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
+                        {user?.Name}
+                    </Box>
+                    {user?.Policy?.IsAdministrator && (
+                        <Box sx={{ fontSize: '0.75rem', fontWeight: 500, color: 'primary.main' }}>
+                            {globalize.translate('LabelAdministrator')}
+                        </Box>
+                    )}
+                </Box>
+            </ListSubheader>
+            <Divider />
             <MenuItem
                 component={Link}
                 to={`/userprofile?userId=${user?.Id}`}
@@ -193,6 +265,10 @@ const AppUserMenu: FC<AppUserMenuProps> = ({
 
             <MenuItem
                 onClick={onLogoutClick}
+                sx={{
+                    '&&': { color: 'primary.main' },
+                    '&& .MuiListItemIcon-root': { color: 'primary.main' }
+                }}
             >
                 <ListItemIcon>
                     <Logout />

@@ -1,5 +1,3 @@
-import { Events as HlsEvents, ErrorTypes as HlsErrorTypes } from 'hls.js/dist/hls.js';
-
 import appSettings from '../scripts/settings/appSettings';
 import browser from '../scripts/browser';
 import Events from '../utils/events.ts';
@@ -244,6 +242,10 @@ export function destroyFlvPlayer(instance) {
 }
 
 export function bindEventsToHlsPlayer(instance, hls, elem, onErrorFn, resolve, reject) {
+    // Read the constants from the player's class instead of importing hls.js here:
+    // this module is loaded at startup, while hls.js is only loaded on playback.
+    const { Events: HlsEvents, ErrorTypes: HlsErrorTypes } = hls.constructor;
+
     hls.on(HlsEvents.MANIFEST_PARSED, function () {
         playWithPromise(elem, onErrorFn).then(resolve, function () {
             if (reject) {

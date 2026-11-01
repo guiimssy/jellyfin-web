@@ -1,15 +1,17 @@
 // GStream design layer.
 // Everything that restyles existing Jellyfin components lives here, so upstream
 // files stay untouched and merges remain simple. Selectors start with `html`
-// to win over component stylesheets that are loaded later (card.scss, videoosd.scss).
+// to win over component stylesheets that are loaded later (card.scss, videoosd.scss),
+// and the few `!important` only override upstream rules that are `!important` themselves.
+// Colors and fonts come from the theme tokens (themes/_base/_theme.scss).
 
+// The fallbacks only apply until the theme stylesheet has loaded
 $accent: var(--jf-palette-primary-main, #e50914);
 $accent-dark: var(--jf-palette-primary-dark, #b20710);
 $ground: var(--jf-palette-background-default, #0b0b0f);
-$surface: #1f1f27;
-$outline: #3f3f46;
-$muted: #a1a1aa;
-$heading-font: "Montserrat", "Inter", "Noto Sans", sans-serif;
+$surface: var(--gs-surface, #1f1f27);
+$outline: var(--gs-outline, #3f3f46);
+$heading-font: var(--gs-heading-font, "Montserrat", "Inter", sans-serif);
 
 // Filled, rounded media glyphs (Apple-style), drawn through a mask so they
 // inherit the text color. Replaces the Material icon glyph of the element.
@@ -20,8 +22,8 @@ $heading-font: "Montserrat", "Inter", "Noto Sans", sans-serif;
         width: 1em;
         height: 1em;
         background-color: currentColor;
+        // The -webkit- prefix is added by autoprefixer (postcss.config.js)
         mask: url("data:image/svg+xml,#{$svg}") center / contain no-repeat;
-        -webkit-mask: url("data:image/svg+xml,#{$svg}") center / contain no-repeat;
     }
 }
 
@@ -50,14 +52,14 @@ html .emby-scrollbuttons-button {
     color: #fff;
     margin: 0 0.2em;
 
-    &:hover:not(:disabled) {
-        background: $outline;
-        color: #fff;
-    }
-
     &:disabled {
         background: transparent;
         color: #71717a;
+    }
+
+    &:hover:not(:disabled) {
+        background: $outline;
+        color: #fff;
     }
 }
 
@@ -244,6 +246,21 @@ html .videoOsdBottom .btnPause {
 
     .layout-mobile & {
         min-height: 52vh;
+    }
+
+    // Placeholder shown while the featured item loads
+    &-loading {
+        animation: gsHero-pulse 1.4s ease-in-out infinite;
+
+        &::after {
+            display: none;
+        }
+    }
+}
+
+@keyframes gsHero-pulse {
+    50% {
+        opacity: 0.6;
     }
 }
 

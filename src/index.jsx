@@ -153,6 +153,16 @@ function loadFonts() {
         import('@fontsource/montserrat/700.css');
         import('@fontsource/montserrat/800.css');
         import('./styles/fonts.gstream.scss');
+
+        // The CJK fonts weigh about 1 MB of CSS: load them only for the languages that need them
+        loadCjkFonts(document.documentElement.lang);
+        Events.on(document, EventType.LANGUAGE_CHANGE, (_e, culture) => loadCjkFonts(culture));
+    }
+}
+
+function loadCjkFonts(culture) {
+    if (/^(ja|ko|zh)\b/i.test(culture || '')) {
+        import('./styles/fonts.noto-cjk.scss');
     }
 }
 

@@ -13,14 +13,14 @@ export const DRAWER_WIDTH = 240;
 const DRAWER_PAPER_SX = {
     backgroundColor: 'background.default',
     backgroundImage: 'none',
-    borderRight: '1px solid #1f1f27',
+    borderRight: '1px solid var(--gs-surface, #1f1f27)',
     '& .MuiListItemButton-root': {
         margin: '2px 12px',
         padding: '10px 12px',
-        borderRadius: '8px',
+        borderRadius: 'var(--jf-control-borderRadius, 8px)',
         color: '#d4d4d8',
         '&:hover': {
-            backgroundColor: '#1f1f27'
+            backgroundColor: 'var(--gs-surface, #1f1f27)'
         },
         '&.Mui-selected, &.Mui-selected:hover': {
             backgroundColor: 'rgba(229, 9, 20, 0.14)',
@@ -31,7 +31,7 @@ const DRAWER_PAPER_SX = {
         }
     },
     '& .MuiListItemIcon-root': {
-        color: '#a1a1aa'
+        color: 'var(--gs-text-muted, #a1a1aa)'
     },
     '& .MuiListItemText-primary': {
         fontWeight: 500
@@ -47,7 +47,7 @@ const DRAWER_PAPER_SX = {
     },
     '& .MuiDivider-root': {
         margin: '8px 24px',
-        borderColor: '#1f1f27'
+        borderColor: 'var(--gs-surface, #1f1f27)'
     }
 };
 
